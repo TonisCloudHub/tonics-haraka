@@ -9,7 +9,7 @@ lxc exec tonics-haraka -- bash -c "apt update -y && apt install build-essential 
 lxc exec tonics-haraka -- bash -c "apt install curl -y && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs"
 
 # Install Haraka
-lxc exec tonics-haraka -- bash -c "npm -g config set user root && npm install -g Haraka"
+lxc exec tonics-haraka -- bash -c "npm install -g Haraka"
 
 # Check Haraka Version 
 lxc exec tonics-haraka -- haraka -v
