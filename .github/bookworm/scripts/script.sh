@@ -20,6 +20,9 @@ lxc exec tonics-haraka -- haraka -i tonics_haraka
 # Haraka AuthEnc Plugin
 lxc exec tonics-haraka -- npm install haraka-plugin-auth-enc-file
 
+# Install Certbot for Standalone Certificate Generation
+lxc exec tonics-haraka -- apt-get -y install certbot
+
 # SystemD Manager
 lxc exec tonics-haraka -- touch  /etc/systemd/system/tonics_haraka.service
 
