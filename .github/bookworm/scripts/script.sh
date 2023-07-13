@@ -23,6 +23,25 @@ lxc exec tonics-haraka -- npm install haraka-plugin-auth-enc-file
 # Install Certbot for Standalone Certificate Generation
 lxc exec tonics-haraka -- apt-get -y install certbot
 
+# Necessary Files
+lxc exec tonics-haraka -- bash -c "touch /root/tonics_haraka/config/tls.ini && touch /root/tonics_haraka/config/auth_enc_file.ini"
+
+# Haraka Plugins Setup
+cat << EOF | sudo tee -a tonics_haraka.plugins
+dnsbl
+helo.checks
+tls
+mail_from.is_resolvable
+spf
+rcpt_to.in_host_list
+headers
+dkim_sign
+queue/smtp_forward
+haraka-plugin-auth-enc-file
+EOF
+
+lxc file push tonics_haraka.plugins tonics-haraka/root/tonics_haraka/config/plugins
+
 # SystemD Manager
 lxc exec tonics-haraka -- touch  /etc/systemd/system/tonics_haraka.service
 
