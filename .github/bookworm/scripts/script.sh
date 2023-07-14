@@ -6,7 +6,7 @@ lxc launch images:debian/bookworm/amd64 tonics-haraka
 # Dependencies
 lxc exec tonics-haraka -- bash -c "apt update -y && apt install build-essential -y"
 
-lxc exec tonics-haraka -- bash -c "apt install curl -y && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs"
+lxc exec tonics-haraka -- bash -c "apt install curl whois -y && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs"
 
 # Install Haraka
 lxc exec tonics-haraka -- bash -c "npm install -g Haraka"
@@ -66,7 +66,7 @@ lxc file push tonics_haraka.service tonics-haraka/etc/systemd/system/tonics_hara
 lxc exec tonics-haraka -- systemctl daemon-reload
 
 # Clean Debian Cache
-lxc exec tonics-haraka -- apt clean
+lxc exec tonics-haraka -- bash -c "apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*"
 
 # Haraka Version
 Version=$(lxc exec tonics-haraka -- haraka -v | grep -oP "Version: \K[\d.]+")
