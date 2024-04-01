@@ -10,10 +10,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: canonical/setup-lxd@v0.1.1
-        with:
-          channel: latest/stable  # switch from distro's LTS channel to latest/stable 
+      - uses: actions/checkout@v4
+      - uses: bdx0/action-incus@v1
+       
       - name: Install Haraka
         run: |
           bash .github/bookworm/scripts/script.sh
