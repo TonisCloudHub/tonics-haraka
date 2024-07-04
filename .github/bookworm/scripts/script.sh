@@ -9,7 +9,7 @@ sudo incus launch images:debian/bookworm/amd64 tonics-haraka
 # Dependencies
 sudo incus exec tonics-haraka -- bash -c "apt update -y && apt install build-essential -y"
 
-sudo incus exec tonics-haraka -- bash -c "apt install curl whois -y && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs"
+sudo incus exec tonics-haraka -- bash -c "apt install curl whois -y && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get install -y nodejs"
 
 # Install Haraka
 sudo incus exec tonics-haraka -- bash -c "npm install -g Haraka"
@@ -23,24 +23,50 @@ sudo incus exec tonics-haraka -- haraka -i tonics_haraka
 # Haraka AuthEnc Plugin
 sudo incus exec tonics-haraka -- npm install haraka-plugin-auth-enc-file
 
-# Install Certbot for Standalone Certificate Generation
-sudo incus exec tonics-haraka -- apt-get -y install certbot
+# Install Certbot for Standalone Certificate Generation [NOT NEEDED, TonicsCloud ACME should do the job]
+# sudo incus exec tonics-haraka -- apt-get -y install certbot
 
 # Necessary Files
-sudo incus exec tonics-haraka -- bash -c "touch /root/tonics_haraka/config/tls.ini && touch /root/tonics_haraka/config/auth_enc_file.ini"
+sudo incus exec tonics-haraka -- bash -c "touch /root/tonics_haraka/config/{tls.ini,auth_enc_file.ini,aliases.json,dkim_sign.ini,relay.ini,rcpt_to.access.blacklist_regex,rcpt_to.access.whitelist,relay_dest_domains.ini}"
 
 # Haraka Plugins Setup
 cat << EOF | sudo tee -a tonics_haraka.plugins
-dnsbl
+# Should be above plugins that run hook_rcpt
+aliases
+
+# CONNECT
+#toobusy
+#karma
+relay
+
+# control which IPs, rDNS hostnames, HELO hostnames, MAIL FROM addresses, and
+# RCPT TO address you accept mail from. See 'haraka -h access'.
+access
+fcrdns
+
+# HELO
 helo.checks
+
 tls
+#
+# AUTH plugins require TLS before AUTH is advertised, see
+haraka-plugin-auth-enc-file
+
+# MAIL FROM
+# Only accept mail where the MAIL FROM domain is resolvable to an MX record
 mail_from.is_resolvable
 spf
+
+# RCPT TO
+# At least one rcpt_to plugin is REQUIRED for inbound email. The simplest
+# plugin is in_host_list, see 'haraka -h rcpt_to.in_host_list' to configure.
 rcpt_to.in_host_list
+
+# DATA
+#bounce
+# Check mail headers are valid
 headers
 dkim_sign
-queue/smtp_forward
-haraka-plugin-auth-enc-file
 EOF
 
 sudo incus file push tonics_haraka.plugins tonics-haraka/root/tonics_haraka/config/plugins
