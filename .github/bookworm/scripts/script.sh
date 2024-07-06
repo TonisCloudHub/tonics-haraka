@@ -7,7 +7,7 @@ sudo incus admin init --auto
 sudo incus launch images:debian/bookworm/amd64 tonics-haraka
 
 # Dependencies
-sudo incus exec tonics-haraka -- bash -c "apt update -y && apt install build-essential -y"
+sudo incus exec tonics-haraka -- bash -c "apt update -y && apt install build-essential rsyslog -y"
 
 sudo incus exec tonics-haraka -- bash -c "apt install curl whois -y && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get install -y nodejs"
 
@@ -21,7 +21,7 @@ sudo incus exec tonics-haraka -- haraka -v
 sudo incus exec tonics-haraka -- haraka -i tonics_haraka
 
 # Haraka AuthEnc Plugin
-sudo incus exec tonics-haraka -- npm install haraka-plugin-auth-enc-file
+sudo incus exec tonics-haraka -- npm install -g haraka-plugin-auth-enc-file
 
 # Install Certbot for Standalone Certificate Generation [NOT NEEDED, TonicsCloud ACME should do the job]
 # sudo incus exec tonics-haraka -- apt-get -y install certbot
